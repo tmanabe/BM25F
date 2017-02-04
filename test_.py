@@ -1,23 +1,33 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from BM25F import normalizer
+from BM25F import Normalizer
 from BM25F import param_dict
-from BM25F import pos_filter
-from BM25F import stem_filter
+from BM25F import PosFilter
+from BM25F import StemFilter
 from BM25F import Tokenizer
+from os import system
 import unittest
 
 
 class TestMisc(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
-        cls.stem_filter = stem_filter()
-        cls.pos_filter = pos_filter()
+        cls.stem_filter = StemFilter()
+        cls.pos_filter = PosFilter()
+
+    def test_example(self):
+        self.assertEqual(0, system('python example.py'))
+
+    def test_readme_includes_example(self):
+        with open('README.md', encoding='utf-8') as f:
+            readme = f.read()
+        with open('example.py', encoding='utf-8') as f:
+            example = f.read()
+        self.assertTrue(example in readme)
 
     def test_normalzier(self):
-        n = normalizer()
+        n = Normalizer()
         self.assertEqual('abc', n.normalize('ＡＢＣ'))
         self.assertEqual('カラー', n.normalize('カラー'))
         self.assertEqual('モニタ', n.normalize('モニター'))

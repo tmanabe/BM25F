@@ -9,7 +9,6 @@ import unittest
 
 
 class TestBags(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.tokenizer = Tokenizer()
@@ -78,6 +77,9 @@ class TestBags(unittest.TestCase):
         self.assertEqual(2, bj.df['データ'])
         self.assertEqual(1, bj.df['モニタ'])
         self.assertEqual(0, bj.df['ダミー'])
+        self.assertEqual(4, bj.total_len['title'])
+        self.assertEqual(3, bj.total_len['body'])
+        self.assertEqual(1, bj.total_len['anchor'])
 
 
 if __name__ == '__main__':

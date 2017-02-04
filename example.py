@@ -1,8 +1,3 @@
-# BM25F
-A variant of BM25F in Python.
-
-## Example
-```
 #!/usr/bin/env python
 # coding: utf-8
 
@@ -49,7 +44,3 @@ b['title'] = 0.50
 b['body'] = 1.00
 
 print(BM25F.bm25f(query, bd0, bj, boost=boost, k1=k1, b=b))
-```
-
-## Requirement
-- janome

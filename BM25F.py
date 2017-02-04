@@ -1,10 +1,11 @@
 from janome.tokenizer import Tokenizer as OriginalTokenizer
+from math import log
 import re
 import unicodedata
 import urllib.request
 
 
-class normalizer(object):
+class Normalizer(object):
     def katakana(self, string):
         return re.sub(
             r'([ァ-タダ-ヶー]{3})ー([^ァ-タダ-ヶー]|$)',
@@ -21,7 +22,7 @@ class normalizer(object):
         return self.lower(self.katakana(self.nfkc(string)))
 
 
-class _filter(set):
+class _Filter(set):
     def __init__(self):
         path, _ = urllib.request.urlretrieve(self.URL)
         with open(path, encoding='utf-8') as f:
@@ -31,13 +32,13 @@ class _filter(set):
                 self.add(l.rstrip())
 
 
-class stem_filter(_filter):
+class StemFilter(_Filter):
     URL = 'https://raw.githubusercontent.com' \
           '/apache/lucene-solr/master' \
           '/solr/example/files/conf/lang/stopwords_ja.txt'
 
 
-class pos_filter(_filter):
+class PosFilter(_Filter):
     URL = 'https://raw.githubusercontent.com' \
           '/apache/lucene-solr/master' \
           '/solr/example/files/conf/lang/stoptags_ja.txt'
@@ -48,7 +49,7 @@ class Tokenizer(OriginalTokenizer):
                  stem_filter=set(),
                  pos_filter=set()):
         super().__init__()
-        self.normalizer = normalizer()
+        self.normalizer = Normalizer()
         self.stem_filter = stem_filter
         self.pos_filter = pos_filter
 
@@ -118,6 +119,7 @@ class bag_jag(object):
     def __init__(self, l=[]):
         self.body = [] + l
         self.df = bag_of_words()
+        self.total_len = bag_of_words()
 
     def __len__(self):
         return len(self.body)
@@ -126,20 +128,29 @@ class bag_jag(object):
         self.body.append(bd)
         for word in bd.reduce().keys():
             self.df[word] += 1
+        for (field_name, bow) in bd.items():
+            self.total_len[field_name] += len(bow)
         return self
 
 
-def entropy(w,  # intuitively is a query keyword
-            bj):  # is a document collection
-    return 0.0
-
-
-def weight(w,
+def weight(word,  # intuitively is a query keyword
            bd,  # is a document
-           bj,
+           bj,  # is a document collection
            boost=param_dict(default=1.0),  # field name -> boost
            b=param_dict(default=0.75)):  # field name -> length deboost
-    return 0.0
+    result = 0.0
+    for (fn, bow) in bd.items():
+        numer = bow[word] * boost[fn]
+        denom = 1 - b[fn]
+        denom += b[fn] * len(bow) / (bj.total_len[fn] / len(bj))
+        result += numer / denom
+    return result
+
+
+def entropy(word, bj):
+    numer = len(bj) - bj.df[word] + 0.5
+    denom = bj.df[word] + 0.5
+    return log(numer / denom)
 
 
 def bm25f(bow,  # is a query
@@ -148,4 +159,9 @@ def bm25f(bow,  # is a query
           boost=param_dict(default=1.0),
           k1=1.2,
           b=param_dict(default=0.75)):
-    return 0.0
+    result = 0.0
+    for (word, count) in bow.items():
+        w = weight(word, bd, bj, boost, b)
+        e = entropy(word, bj)
+        result += count * w / (k1 + w) * e
+    return result
