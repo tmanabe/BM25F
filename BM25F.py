@@ -1,11 +1,24 @@
-from os import linesep
-from subprocess import PIPE
-from subprocess import Popen
+from janome.tokenizer import Tokenizer as OriginalTokenizer
+import re
+import unicodedata
 import urllib.request
 
 
-class BM25F(object):
-    pass
+class normalizer(object):
+    def katakana(self, string):
+        return re.sub(
+            r'([ァ-タダ-ヶー]{3})ー([^ァ-タダ-ヶー]|$)',
+            r'\1\2',
+            string)
+
+    def lower(self, string):
+        return string.lower()
+
+    def nfkc(self, string):
+        return unicodedata.normalize('NFKC', string)
+
+    def normalize(self, string):
+        return self.lower(self.katakana(self.nfkc(string)))
 
 
 class _filter(set):
@@ -30,33 +43,21 @@ class pos_filter(_filter):
           '/solr/example/files/conf/lang/stoptags_ja.txt'
 
 
-class mecab(object):
+class Tokenizer(OriginalTokenizer):
     def __init__(self,
-                 binary,
                  stem_filter=set(),
                  pos_filter=set()):
-        self.mecab = Popen([
-                               binary,
-                               '--node-format=%H\n',
-                               '--eos-format=',
-                           ],
-                           stdin=PIPE,
-                           stdout=PIPE)
+        super().__init__()
+        self.normalizer = normalizer()
         self.stem_filter = stem_filter
         self.pos_filter = pos_filter
 
-    def parse(self, string):
-        string = string.replace(linesep, ' ')
-        self.mecab.stdin.write(string.encode('utf-8'))
-        self.mecab.stdin.write(linesep.encode('utf-8'))
-        out, err = self.mecab.communicate()
-        assert None == err
-        lines = out.decode('utf-8').split(linesep)
-        assert '' == lines.pop()
+    def tokenize_smartly(self, string):
+        string = self.normalizer.normalize(string)
+        # string = string.replace(linesep, ' ')
         result = []
-        for line in lines:
-            l = line.split(',', 7)
-            pos, stem = l[0:4], l[6]
+        for line in self.tokenize(string):
+            pos, stem = line.part_of_speech.split(','), line.base_form
             if stem in self.stem_filter:
                 continue
             while pos[-1] == '*':
@@ -83,16 +84,49 @@ class bag_of_words(dict):
     def __missing__(self, word):
         return 0
 
-    def read_japanese(self, string):
-        pass
+    def __init__(self):
+        super().__init__(self)
+
+    def __len__(self):
+        return sum(self.values())
+
+    def read_japanese(self, tokenizer, string):
+        for (stem, pos) in tokenizer.tokenize_smartly(string):
+            self[stem] += 1
+        return self
 
 
 class bag_dict(dict):
-    pass
+    def __missing__(self, field_name):
+        self[field_name] = bag_of_words()
+        return self[field_name]
+
+    def read_japanese(self, tokenizer, d):
+        for (field_name, string) in d.items():
+            self[field_name].read_japanese(tokenizer, string)
+        return self
+
+    def reduce(self):
+        result = bag_of_words()
+        for bow in self.values():
+            for (word, count) in bow.items():
+                result[word] += count
+        return result
 
 
-class bag_jag(list):
-    pass
+class bag_jag(object):
+    def __init__(self, l=[]):
+        self.body = [] + l
+        self.df = bag_of_words()
+
+    def __len__(self):
+        return len(self.body)
+
+    def append(self, bd):
+        self.body.append(bd)
+        for word in bd.reduce().keys():
+            self.df[word] += 1
+        return self
 
 
 def entropy(w,  # intuitively is a query keyword
