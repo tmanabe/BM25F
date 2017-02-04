@@ -2,7 +2,7 @@
 A variant of BM25F in Python.
 
 ## Example
-```
+```python
 #!/usr/bin/env python
 # coding: utf-8
 
