@@ -1,8 +1,8 @@
 # BM25F
 A variant of BM25F in Python.
 
-## Requirement
-- flake8 (for test)
+## Requirements
+- flake8 (for testing)
 - janome (for BM25F.ja)
 
 ## 例
