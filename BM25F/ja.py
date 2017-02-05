@@ -55,8 +55,10 @@ class Tokenizer(OriginalTokenizer):
     def tokenize_smartly(self, string):
         string = self.normalizer.normalize(string)
         result = []
-        for line in self.tokenize(string):
-            pos, stem = line.part_of_speech.split(','), line.base_form
+        for token in self.tokenize(string):
+            pos, stem = token.part_of_speech.split(','), token.base_form
+            if stem == '*':
+                stem = token.surface
             if stem in self.stem_filter:
                 continue
             while pos[-1] == '*':

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+from BM25F.core import BM25F
 from BM25F.core import bm25f
 from BM25F.core import entropy
 from BM25F.core import param_dict
@@ -19,22 +20,30 @@ class TestScore(unittest.TestCase):
         tokenizer = Tokenizer()
         cls.bj = bag_jag()
         cls.bd0 = bag_dict().read(tokenizer, {
+            'id': '0',
             'title': 'テストデータ',
             'body': 'テスト',
             'anchor': 'モニタ',
         })
         cls.bj.append(cls.bd0)
         cls.bd1 = bag_dict().read(tokenizer, {
+            'id': '1',
             'title': 'テストデータ',
             'body': 'テスト',
         })
         cls.bj.append(cls.bd1)
         cls.bd2 = bag_dict().read(tokenizer, {
+            'id': '2',
             'body': 'テスト',
         })
         cls.bj.append(cls.bd2)
-        cls.bd3 = bag_dict().read(tokenizer, {})
+        cls.bd3 = bag_dict().read(tokenizer, {
+            'id': '3',
+        })
         cls.bj.append(cls.bd3)
+        cls.query = bag_of_words()
+        cls.query['テスト'] = 1
+        cls.query['モニタ'] = 1
 
     def test_weight(self):
         self.assertEqual(
@@ -80,23 +89,36 @@ class TestScore(unittest.TestCase):
             # ~ 0.8472978603872037
             entropy('モニタ', self.bj))
 
+    def test_entropy_cache(self):
+        obj = BM25F(self.query, self.bj)
+        self.assertEqual(
+            log((4 - 3 + 0.5) / (3 + 0.5)),
+            obj.entropy_cache['テスト'])
+        self.assertEqual(
+            log((4 - 1 + 0.5) / (1 + 0.5)),
+            obj.entropy_cache['モニタ'])
+
     def test_bm25f(self):
-        query = bag_of_words()
-        query['テスト'] = 1
-        query['モニタ'] = 1
         self.assertAlmostEqual(
             1.37142857142857 / (1.2 + 1.37142857142857) * -0.84729786038720 +
             0.30769230769230 / (1.2 + 0.30769230769230) * 0.84729786038720,
-            bm25f(query, self.bd0, self.bj))
+            bm25f(self.query, self.bd0, self.bj))
+
+    def test_bm25f_batch(self):
+        obj = BM25F(self.query, self.bj)
+        bds = [self.bd0, self.bd1, self.bd2, self.bd3]
+        expected1 = [{'3': 1}]
+        self.assertEqual(expected1, [d['id'] for d in obj.top(1, bds)])
+        expected3 = [{'3': 1}, {'0': 1}, {'2': 1}]
+        self.assertEqual(expected3, [d['id'] for d in obj.top(3, bds)])
+        expected5 = [{'3': 1}, {'0': 1}, {'2': 1}, {'1': 1}]
+        self.assertEqual(expected5, [d['id'] for d in obj.top(5, bds)])
 
     def test_k1(self):
-        query = bag_of_words()
-        query['テスト'] = 1
-        query['モニタ'] = 1
         self.assertAlmostEqual(
             1.37142857142857 / (2.0 + 1.37142857142857) * -0.84729786038720 +
             0.30769230769230 / (2.0 + 0.30769230769230) * 0.84729786038720,
-            bm25f(query, self.bd0, self.bj, k1=2.0))
+            bm25f(self.query, self.bd0, self.bj, k1=2.0))
 
 
 if __name__ == '__main__':

@@ -1,3 +1,4 @@
+import heapq
 from math import log
 
 
@@ -12,11 +13,52 @@ class param_dict(dict):
         return self.default
 
 
+class BM25F(object):  # For batch scoring
+    BOOST = 1.0
+    K1 = 1.2
+    B = 0.75
+
+    def __init__(self,
+                 bow,
+                 bj,
+                 boost=param_dict(default=BOOST),
+                 k1=K1,
+                 b=param_dict(default=B)):
+        self.bow = bow
+        self.bj = bj
+        self.boost = boost
+        self.k1 = k1
+        self.b = b
+        self.entropy_cache = {}
+        for word in bow:
+            self.entropy_cache[word] = entropy(word, self.bj)
+
+    def bm25f(self, bd):
+        result = 0.0
+        for (word, count) in self.bow.items():
+            w = weight(word, bd, self.bj, self.boost, self.b)
+            e = self.entropy_cache[word]
+            result += count * w / (self.k1 + w) * e
+        return result
+
+    def top(self, k, bds):
+        q = []
+        for bd in bds:
+            pair = (self.bm25f(bd), bd)
+            if len(q) < k:
+                heapq.heappush(q, pair)
+            else:
+                heapq.heappushpop(q, pair)
+        q.sort()
+        q.reverse()
+        return [pair[1] for pair in q]
+
+
 def weight(word,  # intuitively is a query keyword
            bd,  # is a document
            bj,  # is a document collection
-           boost=param_dict(default=1.0),  # field name -> boost
-           b=param_dict(default=0.75)):  # field name -> length deboost
+           boost=param_dict(default=BM25F.BOOST),  # field name -> boost
+           b=param_dict(default=BM25F.B)):  # field name -> length deboost
     result = 0.0
     for (fn, bow) in bd.items():
         numer = bow[word] * boost[fn]
@@ -35,12 +77,7 @@ def entropy(word, bj):
 def bm25f(bow,  # is a query
           bd,
           bj,
-          boost=param_dict(default=1.0),
-          k1=1.2,
-          b=param_dict(default=0.75)):
-    result = 0.0
-    for (word, count) in bow.items():
-        w = weight(word, bd, bj, boost, b)
-        e = entropy(word, bj)
-        result += count * w / (k1 + w) * e
-    return result
+          boost=param_dict(default=BM25F.BOOST),
+          k1=BM25F.K1,
+          b=param_dict(default=BM25F.B)):
+    return BM25F(bow, bj, boost, k1, b).bm25f(bd)
