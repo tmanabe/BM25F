@@ -9,8 +9,8 @@ class bag_of_words(dict):
         return sum(self.values())
 
     def read(self, tokenizer, string):
-        for (stem, pos) in tokenizer.tokenize_smartly(string):
-            self[stem] += 1
+        for tpl in tokenizer.tokenize_smartly(string):
+            self[tpl[0]] += 1
         return self
 
 

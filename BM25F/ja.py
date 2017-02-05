@@ -54,7 +54,6 @@ class Tokenizer(OriginalTokenizer):
 
     def tokenize_smartly(self, string):
         string = self.normalizer.normalize(string)
-        # string = string.replace(linesep, ' ')
         result = []
         for line in self.tokenize(string):
             pos, stem = line.part_of_speech.split(','), line.base_form

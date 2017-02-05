@@ -7,8 +7,18 @@ import unittest
 
 
 class TestMisc(unittest.TestCase):
+    def test_example_en(self):
+        self.assertEqual(0, system('python example_en.py'))
+
     def test_example_ja(self):
         self.assertEqual(0, system('python example_ja.py'))
+
+    def test_readme_includes_example_en(self):
+        with open('README.md', encoding='utf-8') as f:
+            readme = f.read()
+        with open('example_en.py', encoding='utf-8') as f:
+            example = f.read()
+        self.assertTrue(example in readme)
 
     def test_readme_includes_example_ja(self):
         with open('README.md', encoding='utf-8') as f:

@@ -2,38 +2,35 @@
 # coding: utf-8
 
 import BM25F.core
+import BM25F.en
 import BM25F.exp
-import BM25F.ja
 
-tokenizer = BM25F.ja.Tokenizer(stem_filter=BM25F.ja.StemFilter(),
-                               pos_filter=BM25F.ja.PosFilter())
+tokenizer = BM25F.en.Tokenizer(token_filter=BM25F.en.TokenFilter())
 
 bj = BM25F.exp.bag_jag()
 
 bd0 = BM25F.exp.bag_dict().read(tokenizer, {
-    'title': 'テストのデータ',
-    'body': 'テスト',
-    'anchor': 'モニター',
+    'title': 'data-for-testing',
+    'body': 'tested',
+    'anchor': 'Monitors\'',
 })
 bj.append(bd0)
 
 bd1 = BM25F.exp.bag_dict().read(tokenizer, {
-    'title': 'ﾃｽﾄﾃﾞｰﾀ',
-    'body': 'テストします',
+    'title': 'TestData',
+    'body': 'Do a test',
 })
 bj.append(bd1)
 
 bd2 = BM25F.exp.bag_dict().read(tokenizer, {
-    'body': 'テスト。',
+    'body': 'Test.',
 })
 bj.append(bd2)
 
 bd3 = BM25F.exp.bag_dict().read(tokenizer, {})
 bj.append(bd3)
 
-query = BM25F.exp.bag_of_words()
-query['テスト'] = 1
-query['モニタ'] = 1
+query = BM25F.exp.bag_of_words().read(tokenizer, 'test monitor')
 
 boost = BM25F.core.param_dict(default=1.0)
 boost['title'] = 100
