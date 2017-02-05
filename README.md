@@ -1,7 +1,11 @@
 # BM25F
 A variant of BM25F in Python.
 
-## Example
+## Requirement
+- flake8 (for test)
+- janome (for BM25F.ja)
+
+## 例
 ```python
 #!/usr/bin/env python
 # coding: utf-8
@@ -52,6 +56,3 @@ b['body'] = 1.00
 
 print(BM25F.core.bm25f(query, bd0, bj, boost=boost, k1=k1, b=b))
 ```
-
-## Requirement
-- janome
