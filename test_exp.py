@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from BM25F import bag_dict
-from BM25F import bag_jag
-from BM25F import bag_of_words
-from BM25F import Tokenizer
+from BM25F.exp import bag_dict
+from BM25F.exp import bag_jag
+from BM25F.exp import bag_of_words
+from BM25F.ja import Tokenizer
 import unittest
 
 

@@ -3,5 +3,5 @@
 
 from distutils.core import setup
 setup(name='BM25F',
-      version='0.0.1',
-      py_modules=['BM25F'])
+      version='0.0.2',
+      packages=['BM25F'])

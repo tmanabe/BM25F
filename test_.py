@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from BM25F import Normalizer
-from BM25F import param_dict
-from BM25F import PosFilter
-from BM25F import StemFilter
-from BM25F import Tokenizer
+from BM25F.core import param_dict
+from BM25F.ja import Normalizer
+from BM25F.ja import PosFilter
+from BM25F.ja import StemFilter
+from BM25F.ja import Tokenizer
 from os import system
 import unittest
 
@@ -25,6 +25,26 @@ class TestMisc(unittest.TestCase):
         with open('example.py', encoding='utf-8') as f:
             example = f.read()
         self.assertTrue(example in readme)
+
+    def test_flake8(self):
+        self.assertEqual(0, system('flake8'))
+
+    def test_param_dict(self):
+        d = {'title': 10}
+        pd = param_dict(d=d, default=1)
+        self.assertEqual(10, pd['title'])
+        self.assertEqual(1, pd['body'])
+
+    def test_param_dict_omit_d(self):
+        pd = param_dict(default=1)
+        self.assertEqual(1, pd['title'])
+        self.assertEqual(1, pd['body'])
+
+    def test_param_dict_omit_default(self):
+        d = {'title': 10}
+        pd = param_dict(d=d)
+        self.assertEqual(10, pd['title'])
+        self.assertEqual(None, pd['body'])
 
     def test_normalzier(self):
         n = Normalizer()
@@ -63,23 +83,6 @@ class TestMisc(unittest.TestCase):
             ('テスト', '名詞-サ変接続'),
             ('データ', '名詞-一般'),
         ], m.tokenize_smartly('テストのデータ'))
-
-    def test_param_dict(self):
-        d = {'title': 10}
-        pd = param_dict(d=d, default=1)
-        self.assertEqual(10, pd['title'])
-        self.assertEqual(1, pd['body'])
-
-    def test_param_dict_omit_d(self):
-        pd = param_dict(default=1)
-        self.assertEqual(1, pd['title'])
-        self.assertEqual(1, pd['body'])
-
-    def test_param_dict_omit_default(self):
-        d = {'title': 10}
-        pd = param_dict(d=d)
-        self.assertEqual(10, pd['title'])
-        self.assertEqual(None, pd['body'])
 
 
 if __name__ == '__main__':
