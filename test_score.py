@@ -18,22 +18,22 @@ class TestScore(unittest.TestCase):
     def setUpClass(cls):
         tokenizer = Tokenizer()
         cls.bj = bag_jag()
-        cls.bd0 = bag_dict().read_japanese(tokenizer, {
+        cls.bd0 = bag_dict().read(tokenizer, {
             'title': 'テストデータ',
             'body': 'テスト',
             'anchor': 'モニタ',
         })
         cls.bj.append(cls.bd0)
-        cls.bd1 = bag_dict().read_japanese(tokenizer, {
+        cls.bd1 = bag_dict().read(tokenizer, {
             'title': 'テストデータ',
             'body': 'テスト',
         })
         cls.bj.append(cls.bd1)
-        cls.bd2 = bag_dict().read_japanese(tokenizer, {
+        cls.bd2 = bag_dict().read(tokenizer, {
             'body': 'テスト',
         })
         cls.bj.append(cls.bd2)
-        cls.bd3 = bag_dict().read_japanese(tokenizer, {})
+        cls.bd3 = bag_dict().read(tokenizer, {})
         cls.bj.append(cls.bd3)
 
     def test_weight(self):

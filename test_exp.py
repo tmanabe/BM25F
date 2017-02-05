@@ -23,7 +23,7 @@ class TestExp(unittest.TestCase):
         self.assertEqual(11, len(bow))
 
     def test_bag_of_words_from_string_in_japanese(self):
-        bow = bag_of_words().read_japanese(self.tokenizer, 'テスト用のテストデータ')
+        bow = bag_of_words().read(self.tokenizer, 'テスト用のテストデータ')
         self.assertEqual(2, bow['テスト'])
         self.assertEqual(1, bow['用'])
         self.assertEqual(1, bow['の'])
@@ -34,7 +34,7 @@ class TestExp(unittest.TestCase):
         self.assertEqual(bag_of_words(), bd['unknown'])
 
     def test_bag_dict_from_string_dict_in_japanese(self):
-        bd = bag_dict().read_japanese(self.tokenizer, {
+        bd = bag_dict().read(self.tokenizer, {
             'title': 'テスト',
             'body': 'データ',
         })
@@ -46,7 +46,7 @@ class TestExp(unittest.TestCase):
         self.assertEqual(bow_body, bd['body'])
 
     def test_bag_dict_reduce(self):
-        bd = bag_dict().read_japanese(self.tokenizer, {
+        bd = bag_dict().read(self.tokenizer, {
             'title': 'テストデータ',
             'body': 'テスト',
             'anchor': 'データ',
@@ -58,19 +58,19 @@ class TestExp(unittest.TestCase):
 
     def test_bag_jag(self):
         bj = bag_jag()
-        bd0 = bag_dict().read_japanese(self.tokenizer, {
+        bd0 = bag_dict().read(self.tokenizer, {
             'title': 'テストデータ',
             'body': 'テスト',
             'anchor': 'モニタ',
         })
-        bd1 = bag_dict().read_japanese(self.tokenizer, {
+        bd1 = bag_dict().read(self.tokenizer, {
             'title': 'テストデータ',
             'body': 'テスト',
         })
-        bd2 = bag_dict().read_japanese(self.tokenizer, {
+        bd2 = bag_dict().read(self.tokenizer, {
             'body': 'テスト',
         })
-        bd3 = bag_dict().read_japanese(self.tokenizer, {})
+        bd3 = bag_dict().read(self.tokenizer, {})
         bj.append(bd0).append(bd1).append(bd2).append(bd3)
         self.assertEqual(4, len(bj))
         self.assertEqual(3, bj.df['テスト'])

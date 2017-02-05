@@ -19,25 +19,25 @@ tokenizer = BM25F.ja.Tokenizer(stem_filter=BM25F.ja.StemFilter(),
 
 bj = BM25F.exp.bag_jag()
 
-bd0 = BM25F.exp.bag_dict().read_japanese(tokenizer, {
-    'title': 'テストデータ',
+bd0 = BM25F.exp.bag_dict().read(tokenizer, {
+    'title': 'テストのデータ',
     'body': 'テスト',
-    'anchor': 'モニタ',
+    'anchor': 'モニター',
 })
 bj.append(bd0)
 
-bd1 = BM25F.exp.bag_dict().read_japanese(tokenizer, {
-    'title': 'テストデータ',
-    'body': 'テスト',
+bd1 = BM25F.exp.bag_dict().read(tokenizer, {
+    'title': 'ﾃｽﾄﾃﾞｰﾀ',
+    'body': 'テストします',
 })
 bj.append(bd1)
 
-bd2 = BM25F.exp.bag_dict().read_japanese(tokenizer, {
-    'body': 'テスト',
+bd2 = BM25F.exp.bag_dict().read(tokenizer, {
+    'body': 'テスト。',
 })
 bj.append(bd2)
 
-bd3 = BM25F.exp.bag_dict().read_japanese(tokenizer, {})
+bd3 = BM25F.exp.bag_dict().read(tokenizer, {})
 bj.append(bd3)
 
 query = BM25F.exp.bag_of_words()

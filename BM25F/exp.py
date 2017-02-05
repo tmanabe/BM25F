@@ -8,7 +8,7 @@ class bag_of_words(dict):
     def __len__(self):
         return sum(self.values())
 
-    def read_japanese(self, tokenizer, string):
+    def read(self, tokenizer, string):
         for (stem, pos) in tokenizer.tokenize_smartly(string):
             self[stem] += 1
         return self
@@ -19,9 +19,9 @@ class bag_dict(dict):
         self[field_name] = bag_of_words()
         return self[field_name]
 
-    def read_japanese(self, tokenizer, d):
+    def read(self, tokenizer, d):
         for (field_name, string) in d.items():
-            self[field_name].read_japanese(tokenizer, string)
+            self[field_name].read(tokenizer, string)
         return self
 
     def reduce(self):
