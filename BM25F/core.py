@@ -43,15 +43,15 @@ class BM25F(object):  # For batch scoring
 
     def top(self, k, bds):
         q = []
-        for bd in bds:
-            pair = (self.bm25f(bd), bd)
+        for i, bd in enumerate(bds):
+            trpl = (self.bm25f(bd), i, bd)
             if len(q) < k:
-                heapq.heappush(q, pair)
+                heapq.heappush(q, trpl)
             else:
-                heapq.heappushpop(q, pair)
+                heapq.heappushpop(q, trpl)
         q.sort()
         q.reverse()
-        return [pair[1] for pair in q]
+        return [trpl[-1] for trpl in q]
 
 
 def weight(word,  # intuitively is a query keyword

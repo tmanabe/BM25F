@@ -13,7 +13,7 @@ bj = BM25F.exp.bag_jag()
 bd0 = BM25F.exp.bag_dict().read(tokenizer, {
     'title': 'テストのデータ',
     'body': 'テスト',
-    'anchor': 'モニター',
+    'anchor': 'クエリー',
 })
 bj.append(bd0)
 
@@ -28,12 +28,12 @@ bd2 = BM25F.exp.bag_dict().read(tokenizer, {
 })
 bj.append(bd2)
 
-bd3 = BM25F.exp.bag_dict().read(tokenizer, {})
+bd3 = BM25F.exp.bag_dict().read(tokenizer, {
+    'title': '例',
+})
 bj.append(bd3)
 
-query = BM25F.exp.bag_of_words()
-query['テスト'] = 1
-query['モニタ'] = 1
+query = BM25F.exp.bag_of_words().read(tokenizer, '例のクエリ')
 
 boost = BM25F.core.param_dict(default=1.0)
 boost['title'] = 100
@@ -45,4 +45,5 @@ b = BM25F.core.param_dict(default=0.75)
 b['title'] = 0.50
 b['body'] = 1.00
 
-print(BM25F.core.bm25f(query, bd0, bj, boost=boost, k1=k1, b=b))
+scorer = BM25F.core.BM25F(query, bj, boost, k1, b)
+print(scorer.top(2, [bd0, bd1, bd2, bd3]))
