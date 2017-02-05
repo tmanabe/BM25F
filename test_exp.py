@@ -8,7 +8,7 @@ from BM25F.ja import Tokenizer
 import unittest
 
 
-class TestBags(unittest.TestCase):
+class TestExp(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.tokenizer = Tokenizer()
