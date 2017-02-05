@@ -4,6 +4,7 @@ A variant of BM25F in Python.
 ## Requirements
 - flake8 (for testing)
 - janome (for BM25F.ja)
+- stemming (for BM25F.en)
 
 ## Example
 ```python
