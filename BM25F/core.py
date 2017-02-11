@@ -6,11 +6,11 @@ class param_dict(dict):
     def __new__(self, d={}, default=None):
         self = dict.__new__(self)
         self.update(d)
-        self.default = default
+        self._default = default
         return self
 
     def __missing__(self, key):
-        return self.default
+        return self._default
 
 
 class batch(object):  # For batch scoring
