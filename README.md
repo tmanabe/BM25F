@@ -20,6 +20,7 @@ tokenizer = BM25F.en.Tokenizer(token_filter=BM25F.en.TokenFilter())
 bj = BM25F.exp.bag_jag()
 
 bd0 = BM25F.exp.bag_dict().read(tokenizer, {
+    '_id': '0',
     'title': 'data-for-testing',
     'body': 'tests\'',
     'anchor': 'QUERIES',
@@ -27,17 +28,20 @@ bd0 = BM25F.exp.bag_dict().read(tokenizer, {
 bj.append(bd0)
 
 bd1 = BM25F.exp.bag_dict().read(tokenizer, {
+    '_id': '1',
     'title': 'TestData\'s',
     'body': 'Do a test',
 })
 bj.append(bd1)
 
 bd2 = BM25F.exp.bag_dict().read(tokenizer, {
+    '_id': '2',
     'body': 'Test.',
 })
 bj.append(bd2)
 
 bd3 = BM25F.exp.bag_dict().read(tokenizer, {
+    '_id': '3',
     'title': 'example',
 })
 bj.append(bd3)
@@ -54,7 +58,7 @@ b = BM25F.core.param_dict(default=0.75)
 b['title'] = 0.50
 b['body'] = 1.00
 
-scorer = BM25F.core.batch(query, bj, boost, k1, b)
+scorer = BM25F.core.batch('_id', query, bj, boost, k1, b)
 print(scorer.top(2, [bd0, bd1, bd2, bd3]))
 ```
 
@@ -73,6 +77,7 @@ tokenizer = BM25F.ja.Tokenizer(stem_filter=BM25F.ja.StemFilter(),
 bj = BM25F.exp.bag_jag()
 
 bd0 = BM25F.exp.bag_dict().read(tokenizer, {
+    '_id': '0',
     'title': 'テストのデータ',
     'body': 'テスト',
     'anchor': 'クエリー',
@@ -80,17 +85,20 @@ bd0 = BM25F.exp.bag_dict().read(tokenizer, {
 bj.append(bd0)
 
 bd1 = BM25F.exp.bag_dict().read(tokenizer, {
+    '_id': '1',
     'title': 'ﾃｽﾄﾃﾞｰﾀ',
     'body': 'テストします',
 })
 bj.append(bd1)
 
 bd2 = BM25F.exp.bag_dict().read(tokenizer, {
+    '_id': '2',
     'body': 'テスト。',
 })
 bj.append(bd2)
 
 bd3 = BM25F.exp.bag_dict().read(tokenizer, {
+    '_id': '3',
     'title': '例',
 })
 bj.append(bd3)
@@ -107,6 +115,6 @@ b = BM25F.core.param_dict(default=0.75)
 b['title'] = 0.50
 b['body'] = 1.00
 
-scorer = BM25F.core.batch(query, bj, boost, k1, b)
+scorer = BM25F.core.batch('_id', query, bj, boost, k1, b)
 print(scorer.top(2, [bd0, bd1, bd2, bd3]))
 ```

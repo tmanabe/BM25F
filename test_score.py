@@ -90,7 +90,7 @@ class TestScore(unittest.TestCase):
             entropy('モニタ', self.bj))
 
     def test_entropy_cache(self):
-        obj = batch(self.query, self.bj)
+        obj = batch('_id', self.query, self.bj)
         self.assertEqual(
             log((4 - 3 + 0.5) / (3 + 0.5)),
             obj.entropy_cache['テスト'])
@@ -105,14 +105,14 @@ class TestScore(unittest.TestCase):
             bm25f(self.query, self.bd0, self.bj))
 
     def test_bm25f_batch(self):
-        obj = batch(self.query, self.bj)
+        obj = batch('_id', self.query, self.bj)
         bds = [self.bd0, self.bd1, self.bd2, self.bd3]
-        expected1 = [{'3': 1}]
-        self.assertEqual(expected1, [d['_id'] for d in obj.top(1, bds)])
-        expected3 = [{'3': 1}, {'0': 1}, {'2': 1}]
-        self.assertEqual(expected3, [d['_id'] for d in obj.top(3, bds)])
-        expected5 = [{'3': 1}, {'0': 1}, {'2': 1}, {'1': 1}]
-        self.assertEqual(expected5, [d['_id'] for d in obj.top(5, bds)])
+        expected1 = ['3']
+        self.assertEqual(expected1, obj.top(1, bds))
+        expected3 = ['3', '0', '2']
+        self.assertEqual(expected3, obj.top(3, bds))
+        expected5 = ['3', '0', '2', '1']
+        self.assertEqual(expected5, obj.top(5, bds))
 
     def test_k1(self):
         self.assertAlmostEqual(

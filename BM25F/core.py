@@ -19,11 +19,13 @@ class batch(object):  # For batch scoring
     B = 0.75
 
     def __init__(self,
+                 id,
                  bow,
                  bj,
                  boost=param_dict(default=BOOST),
                  k1=K1,
                  b=param_dict(default=B)):
+        self.id = id
         self.bow = bow
         self.bj = bj
         self.boost = boost
@@ -44,7 +46,9 @@ class batch(object):  # For batch scoring
     def top(self, k, bds):
         q = []
         for i, bd in enumerate(bds):
-            trpl = (self.bm25f(bd), i, bd)
+            assert 1 == len(bd[self.id])
+            id = list(bd[self.id].keys())[0]
+            trpl = (self.bm25f(bd), i, id)
             if len(q) < k:
                 heapq.heappush(q, trpl)
             else:
@@ -80,4 +84,5 @@ def bm25f(bow,  # is a query
           boost=param_dict(default=batch.BOOST),
           k1=batch.K1,
           b=param_dict(default=batch.B)):
-    return batch(bow, bj, boost, k1, b).bm25f(bd)
+    dummy = list(bd.keys())[0]
+    return batch(dummy, bow, bj, boost, k1, b).bm25f(bd)
