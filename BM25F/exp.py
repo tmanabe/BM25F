@@ -21,7 +21,10 @@ class bag_dict(dict):
 
     def read(self, tokenizer, d):
         for (field_name, string) in d.items():
-            self[field_name].read(tokenizer, string)
+            if field_name[0] == '_':  # Protect from tokenizer
+                self[field_name][string] += 1
+            else:
+                self[field_name].read(tokenizer, string)
         return self
 
     def reduce(self):
