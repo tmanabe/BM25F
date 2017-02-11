@@ -13,7 +13,7 @@ class param_dict(dict):
         return self.default
 
 
-class BM25F(object):  # For batch scoring
+class batch(object):  # For batch scoring
     BOOST = 1.0
     K1 = 1.2
     B = 0.75
@@ -57,8 +57,8 @@ class BM25F(object):  # For batch scoring
 def weight(word,  # intuitively is a query keyword
            bd,  # is a document
            bj,  # is a document collection
-           boost=param_dict(default=BM25F.BOOST),  # field name -> boost
-           b=param_dict(default=BM25F.B)):  # field name -> length deboost
+           boost=param_dict(default=batch.BOOST),  # field name -> boost
+           b=param_dict(default=batch.B)):  # field name -> length deboost
     result = 0.0
     for (fn, bow) in bd.items():
         numer = bow[word] * boost[fn]
@@ -77,7 +77,7 @@ def entropy(word, bj):
 def bm25f(bow,  # is a query
           bd,
           bj,
-          boost=param_dict(default=BM25F.BOOST),
-          k1=BM25F.K1,
-          b=param_dict(default=BM25F.B)):
-    return BM25F(bow, bj, boost, k1, b).bm25f(bd)
+          boost=param_dict(default=batch.BOOST),
+          k1=batch.K1,
+          b=param_dict(default=batch.B)):
+    return batch(bow, bj, boost, k1, b).bm25f(bd)

@@ -54,7 +54,7 @@ b = BM25F.core.param_dict(default=0.75)
 b['title'] = 0.50
 b['body'] = 1.00
 
-scorer = BM25F.core.BM25F(query, bj, boost, k1, b)
+scorer = BM25F.core.batch(query, bj, boost, k1, b)
 print(scorer.top(2, [bd0, bd1, bd2, bd3]))
 ```
 
@@ -107,6 +107,6 @@ b = BM25F.core.param_dict(default=0.75)
 b['title'] = 0.50
 b['body'] = 1.00
 
-scorer = BM25F.core.BM25F(query, bj, boost, k1, b)
+scorer = BM25F.core.batch(query, bj, boost, k1, b)
 print(scorer.top(2, [bd0, bd1, bd2, bd3]))
 ```

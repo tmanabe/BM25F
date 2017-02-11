@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from BM25F.core import BM25F
+from BM25F.core import batch
 from BM25F.core import bm25f
 from BM25F.core import entropy
 from BM25F.core import param_dict
@@ -90,7 +90,7 @@ class TestScore(unittest.TestCase):
             entropy('モニタ', self.bj))
 
     def test_entropy_cache(self):
-        obj = BM25F(self.query, self.bj)
+        obj = batch(self.query, self.bj)
         self.assertEqual(
             log((4 - 3 + 0.5) / (3 + 0.5)),
             obj.entropy_cache['テスト'])
@@ -105,7 +105,7 @@ class TestScore(unittest.TestCase):
             bm25f(self.query, self.bd0, self.bj))
 
     def test_bm25f_batch(self):
-        obj = BM25F(self.query, self.bj)
+        obj = batch(self.query, self.bj)
         bds = [self.bd0, self.bd1, self.bd2, self.bd3]
         expected1 = [{'3': 1}]
         self.assertEqual(expected1, [d['id'] for d in obj.top(1, bds)])
