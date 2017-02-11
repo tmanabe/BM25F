@@ -20,25 +20,25 @@ class TestScore(unittest.TestCase):
         tokenizer = Tokenizer()
         cls.bj = bag_jag()
         cls.bd0 = bag_dict().read(tokenizer, {
-            'id': '0',
+            '_id': '0',
             'title': 'テストデータ',
             'body': 'テスト',
             'anchor': 'モニタ',
         })
         cls.bj.append(cls.bd0)
         cls.bd1 = bag_dict().read(tokenizer, {
-            'id': '1',
+            '_id': '1',
             'title': 'テストデータ',
             'body': 'テスト',
         })
         cls.bj.append(cls.bd1)
         cls.bd2 = bag_dict().read(tokenizer, {
-            'id': '2',
+            '_id': '2',
             'body': 'テスト',
         })
         cls.bj.append(cls.bd2)
         cls.bd3 = bag_dict().read(tokenizer, {
-            'id': '3',
+            '_id': '3',
         })
         cls.bj.append(cls.bd3)
         cls.query = bag_of_words()
@@ -108,11 +108,11 @@ class TestScore(unittest.TestCase):
         obj = batch(self.query, self.bj)
         bds = [self.bd0, self.bd1, self.bd2, self.bd3]
         expected1 = [{'3': 1}]
-        self.assertEqual(expected1, [d['id'] for d in obj.top(1, bds)])
+        self.assertEqual(expected1, [d['_id'] for d in obj.top(1, bds)])
         expected3 = [{'3': 1}, {'0': 1}, {'2': 1}]
-        self.assertEqual(expected3, [d['id'] for d in obj.top(3, bds)])
+        self.assertEqual(expected3, [d['_id'] for d in obj.top(3, bds)])
         expected5 = [{'3': 1}, {'0': 1}, {'2': 1}, {'1': 1}]
-        self.assertEqual(expected5, [d['id'] for d in obj.top(5, bds)])
+        self.assertEqual(expected5, [d['_id'] for d in obj.top(5, bds)])
 
     def test_k1(self):
         self.assertAlmostEqual(
