@@ -74,7 +74,7 @@ class bag_jag(object):
         return self
 
     def read(self, path):
-        with open(path, 'r') as f:
+        with open(path, 'r', encoding='utf-8') as f:
             self.df += json.loads(f.readline())
             self.total_len += json.loads(f.readline())
             for l in f.readlines():
@@ -84,7 +84,7 @@ class bag_jag(object):
         return self
 
     def write(self, path):
-        with open(path, 'w') as f:
+        with open(path, 'w', encoding='utf-8') as f:
             f.write(json.dumps(self.df, ensure_ascii=False))
             f.write('\n')
             f.write(json.dumps(self.total_len, ensure_ascii=False))
