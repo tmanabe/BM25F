@@ -68,9 +68,9 @@ class TestScore(unittest.TestCase):
         bj.append(bd1)
         bd2 = bag_dict().read(tokenizer, {'~pv': 100})
         bj.append(bd2)
-        self.assertEqual((1 * 1.0), weight('ダミー', bd0, self.bj))
-        self.assertEqual((10 * 1.0), weight('ダミー', bd1, self.bj))
-        self.assertEqual((100 * 1.0), weight('ダミー', bd2, self.bj))
+        self.assertEqual((1 * 1.0), weight('ダミー', bd0, bj))
+        self.assertEqual((10 * 1.0), weight('ダミー', bd1, bj))
+        self.assertEqual((100 * 1.0), weight('ダミー', bd2, bj))
 
     def test_boost(self):
         boost = param_dict(default=1.0)
