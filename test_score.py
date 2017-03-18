@@ -59,6 +59,19 @@ class TestScore(unittest.TestCase):
             # ~ 0.3076923076923077
             weight('モニタ', self.bd0, self.bj))
 
+    def test_weight_continuous(self):
+        tokenizer = Tokenizer()
+        bj = bag_jag()
+        bd0 = bag_dict().read(tokenizer, {'~pv': 1})
+        bj.append(bd0)
+        bd1 = bag_dict().read(tokenizer, {'~pv': 10})
+        bj.append(bd1)
+        bd2 = bag_dict().read(tokenizer, {'~pv': 100})
+        bj.append(bd2)
+        self.assertEqual((1 * 1.0), weight('ダミー', bd0, self.bj))
+        self.assertEqual((10 * 1.0), weight('ダミー', bd1, self.bj))
+        self.assertEqual((100 * 1.0), weight('ダミー', bd2, self.bj))
+
     def test_boost(self):
         boost = param_dict(default=1.0)
         boost['title'] = 100

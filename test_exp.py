@@ -48,10 +48,14 @@ class TestExp(unittest.TestCase):
     def test_bag_dict_from_string_dict_without_tokenizer(self):
         bd = bag_dict().read(self.tokenizer, {
             '_id': 'テスト用のデータ001',
+            '~pv': 123.0,
         })
         bow = bag_of_words()
         bow['テスト用のデータ001'] = 1
         self.assertEqual(bow, bd['_id'])
+        bow = bag_of_words()
+        bow[123.0] = 1
+        self.assertEqual(bow, bd['~pv'])
 
     def test_bag_dict_reduce(self):
         bd = bag_dict().read(self.tokenizer, {

@@ -65,10 +65,14 @@ def weight(word,  # intuitively is a query keyword
            b=param_dict(default=batch.B)):  # field name -> length deboost
     result = 0.0
     for (fn, bow) in bd.items():
-        numer = bow[word] * boost[fn]
-        denom = 1 - b[fn]
-        denom += b[fn] * len(bow) / (bj.total_len[fn] / len(bj))
-        result += numer / denom
+        if fn[0] == '~':  # Continuous value
+            assert len(bow) == 1
+            result += list(bow.keys())[0] * boost[fn]
+        else:
+            numer = bow[word] * boost[fn]
+            denom = 1 - b[fn]
+            denom += b[fn] * len(bow) / (bj.total_len[fn] / len(bj))
+            result += numer / denom
     return result
 
 
