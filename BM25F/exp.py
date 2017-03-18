@@ -1,12 +1,17 @@
+import json
+
+
 class bag_of_words(dict):
     def __missing__(self, word):
         return 0
 
-    def __init__(self):
-        super().__init__(self)
-
     def __len__(self):
         return sum(self.values())
+
+    def __iadd__(self, d):
+        for word, count in d.items():
+            self[word] += count
+        return self
 
     def read(self, tokenizer, string):
         for tpl in tokenizer.tokenize_smartly(string):
@@ -18,6 +23,11 @@ class bag_dict(dict):
     def __missing__(self, field_name):
         self[field_name] = bag_of_words()
         return self[field_name]
+
+    def __iadd__(self, d):
+        for fn, bow in d.items():
+            self[fn] += bow
+        return self
 
     def read(self, tokenizer, d):
         for (field_name, string) in d.items():
@@ -44,10 +54,37 @@ class bag_jag(object):
     def __len__(self):
         return len(self.body)
 
+    def __iadd__(self, other):
+        self.body += other.body
+        self.df += other.df
+        self.total_len += other.total_len
+        return self
+
     def append(self, bd):
         self.body.append(bd)
         for word in bd.reduce().keys():
             self.df[word] += 1
         for (field_name, bow) in bd.items():
             self.total_len[field_name] += len(bow)
+        return self
+
+    def read(self, path):
+        with open(path, 'r') as f:
+            self.df += json.loads(f.readline())
+            self.total_len += json.loads(f.readline())
+            for l in f.readlines():
+                bd = bag_dict()
+                bd += json.loads(l)
+                self.body.append(bd)
+        return self
+
+    def write(self, path):
+        with open(path, 'w') as f:
+            f.write(json.dumps(self.df))
+            f.write('\n')
+            f.write(json.dumps(self.total_len))
+            f.write('\n')
+            for bd in self.body:
+                f.write(json.dumps(bd))
+                f.write('\n')
         return self
