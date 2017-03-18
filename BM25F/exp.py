@@ -80,11 +80,11 @@ class bag_jag(object):
 
     def write(self, path):
         with open(path, 'w') as f:
-            f.write(json.dumps(self.df))
+            f.write(json.dumps(self.df, ensure_ascii=False))
             f.write('\n')
-            f.write(json.dumps(self.total_len))
+            f.write(json.dumps(self.total_len, ensure_ascii=False))
             f.write('\n')
             for bd in self.body:
-                f.write(json.dumps(bd))
+                f.write(json.dumps(bd, ensure_ascii=False))
                 f.write('\n')
         return self
