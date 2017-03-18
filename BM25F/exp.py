@@ -26,6 +26,10 @@ class bag_dict(dict):
 
     def __iadd__(self, d):
         for fn, bow in d.items():
+            if fn[0] == '~':  # Continuous
+                assert 1 == len(bow)
+                k = list(bow.keys())[0]
+                bow = {float(k): bow[k]}
             self[fn] += bow
         return self
 
@@ -63,7 +67,8 @@ class bag_jag(object):
     def append(self, bd):
         self.body.append(bd)
         for word in bd.reduce().keys():
-            self.df[word] += 1
+            if isinstance(word, str):
+                self.df[word] += 1
         for (field_name, bow) in bd.items():
             self.total_len[field_name] += len(bow)
         return self

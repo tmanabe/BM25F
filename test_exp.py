@@ -128,6 +128,25 @@ class TestExp(unittest.TestCase):
         self.assertEqual(expect.df, actual.df)
         self.assertEqual(expect.total_len, actual.total_len)
 
+    def test_bag_jag_rw_continuous(self):
+        expect = bag_jag()
+        bd = bag_dict().read(self.tokenizer, {
+            '_id': 'テスト用のデータ001',
+            '~pv': 123.0,
+        })
+        expect.append(bd)
+        d = tempfile.TemporaryDirectory()
+        p = '%s/tmp.txt' % d.name
+        expect.write(p)
+        actual = bag_jag()
+        actual.read(p)
+        d.cleanup()
+        self.assertEqual(expect.body, actual.body)
+        self.assertEqual(expect.df, actual.df)
+        self.assertTrue(123.0 not in expect.df)
+        self.assertTrue('123.0' not in actual.df)
+        self.assertEqual(expect.total_len, actual.total_len)
+
 
 if __name__ == '__main__':
     unittest.main()
