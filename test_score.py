@@ -10,6 +10,7 @@ from BM25F.exp import bag_dict
 from BM25F.exp import bag_jag
 from BM25F.exp import bag_of_words
 from BM25F.ja import Tokenizer
+from BM25F.prf import characterize
 from math import log
 import unittest
 
@@ -132,6 +133,15 @@ class TestScore(unittest.TestCase):
             1.37142857142857 / (2.0 + 1.37142857142857) * -0.84729786038720 +
             0.30769230769230 / (2.0 + 0.30769230769230) * 0.84729786038720,
             bm25f(self.query, self.bd0, self.bj, k1=2.0))
+
+    def test_characterize(self):
+        r = characterize(self.bd0, self.bj)
+        self.assertAlmostEqual(
+            1.37142857142857 / (1.2 + 1.37142857142857) * -0.84729786038720,
+            r['テスト'])
+        self.assertAlmostEqual(
+            0.30769230769230 / (1.2 + 0.30769230769230) * 0.84729786038720,
+            r['モニタ'])
 
 
 if __name__ == '__main__':
