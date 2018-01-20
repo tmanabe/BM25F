@@ -2,6 +2,7 @@
 # coding: utf-8
 
 from BM25F.core import param_dict
+from BM25F.prf import prf_result
 from os import system
 import unittest
 
@@ -31,8 +32,7 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(0, system('flake8'))
 
     def test_param_dict(self):
-        d = {'title': 10}
-        pd = param_dict(d=d, default=1)
+        pd = param_dict(d={'title': 10}, default=1)
         self.assertEqual(10, pd['title'])
         self.assertEqual(1, pd['body'])
 
@@ -42,10 +42,35 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(1, pd['body'])
 
     def test_param_dict_omit_default(self):
-        d = {'title': 10}
-        pd = param_dict(d=d)
+        pd = param_dict({'title': 10})
         self.assertEqual(10, pd['title'])
         self.assertEqual(None, pd['body'])
+
+    def test_prf_result(self):
+        pr = prf_result({'keyword': 1.23})
+        self.assertEqual(1.23, pr['keyword'])
+        self.assertEqual(0.0, pr['word'])
+
+    def test_prf_result_iadd(self):
+        pr = prf_result({'keyword': 1.23})
+        pr += pr
+        self.assertEqual(2.46, pr['keyword'])
+
+    def test_prf_result_isub(self):
+        pr = prf_result({'keyword': 1.23})
+        pr -= pr
+        self.assertEqual(0.0, pr['keyword'])
+
+    def test_prf_result_imul(self):
+        pr = prf_result({'keyword': 1.23})
+        pr *= 2.0
+        self.assertEqual(2.46, pr['keyword'])
+        pr *= 0.25
+        self.assertEqual(0.615, pr['keyword'])
+
+    def test_prf_result_sort(self):
+        pr = prf_result({'keyword': 1.23, 'key': 2.34, 'word': 0.0})
+        self.assertEqual(['key', 'keyword', 'word'], pr.sort())
 
 
 if __name__ == '__main__':

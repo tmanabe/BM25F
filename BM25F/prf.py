@@ -3,7 +3,7 @@ from BM25F.core import bm25f
 from BM25F.core import param_dict
 
 
-class result(dict):
+class prf_result(dict):
     def __new__(self, d={}):
         self = dict.__new__(self)
         self.update(d)
@@ -11,6 +11,24 @@ class result(dict):
 
     def __missing__(self, key):
         return 0.0
+
+    def __iadd__(self, other):
+        for word, score in other.items():
+            self[word] += score
+        return self
+
+    def __isub__(self, other):
+        for word, score in other.items():
+            self[word] -= score
+        return self
+
+    def __imul__(self, multi):
+        for word in self:
+            self[word] *= multi
+        return self
+
+    def sort(self):
+        return sorted(self.keys(), key=lambda w: -self[w])
 
 
 def characterize(bd,  # this document
@@ -22,7 +40,7 @@ def characterize(bd,  # this document
     for bow in bd.values():
         for w in bow.keys():
             words.add(w)
-    r = result()
+    pr = prf_result()
     for w in words:
-        r[w] = bm25f({w: 1}, bd, bj, boost, k1, b)
-    return r
+        pr[w] = bm25f({w: 1}, bd, bj, boost, k1, b)
+    return pr
