@@ -14,12 +14,18 @@ class prf_result(dict):
 
     def __iadd__(self, other):
         for word, score in other.items():
-            self[word] += score
+            if word in self:
+                self[word] += score
+            else:
+                self[word] = score
         return self
 
     def __isub__(self, other):
         for word, score in other.items():
-            self[word] -= score
+            if word in self:
+                self[word] -= score
+            else:
+                self[word] = -score
         return self
 
     def __imul__(self, multi):

@@ -29,7 +29,7 @@ class TestMisc(unittest.TestCase):
         self.assertTrue(example in readme)
 
     def test_flake8(self):
-        self.assertEqual(0, system('flake8'))
+        self.assertEqual(0, system('flake8 . --ignore=D'))
 
     def test_param_dict(self):
         pd = param_dict(d={'title': 10}, default=1)
@@ -52,14 +52,14 @@ class TestMisc(unittest.TestCase):
         self.assertEqual(0.0, pr['word'])
 
     def test_prf_result_iadd(self):
-        pr = prf_result({'keyword': 1.23})
-        pr += pr
-        self.assertEqual(2.46, pr['keyword'])
+        pr = prf_result({'key': 0.12, 'keyword': 1.23})
+        pr += prf_result({'keyword': 2.34, 'word': 3.45})
+        self.assertEqual(pr, {'key': 0.12, 'keyword': 3.57, 'word': 3.45})
 
     def test_prf_result_isub(self):
-        pr = prf_result({'keyword': 1.23})
-        pr -= pr
-        self.assertEqual(0.0, pr['keyword'])
+        pr = prf_result({'key': 0.12, 'keyword': 1.23})
+        pr -= prf_result({'keyword': 1.23, 'word': 3.45})
+        self.assertEqual(pr, {'key': 0.12, 'keyword': 0.00, 'word': -3.45})
 
     def test_prf_result_imul(self):
         pr = prf_result({'keyword': 1.23})
